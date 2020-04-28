@@ -102,7 +102,8 @@ module.exports = function (RED) {
           host,
         ]);
       } else {
-        node.error("Sorry - your platform - " + plat + " - is not recognised.");
+				node.error("Sorry - your platform - " + plat + " - is not recognised.");
+				return;
       }
 
       let line = "";
@@ -128,7 +129,7 @@ module.exports = function (RED) {
       });
 
       // process command result
-      ex.on("close", function (code) {
+      ex.on("exit", function (code) {
         // node.warn(line);
 
         let m = [...line.matchAll(regex)];
@@ -165,7 +166,7 @@ module.exports = function (RED) {
 					node.send(msg);
         }
         if (done) {
-          done();
+					done();
         }
       });
     });
