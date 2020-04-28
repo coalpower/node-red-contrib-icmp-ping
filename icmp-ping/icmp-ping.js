@@ -160,9 +160,9 @@ module.exports = function (RED) {
         stats.ratio = +(stats.success / stats.sent).toFixed(1);
 
         if (code === 0) {
-          msg.payload = stats;
+					msg.payload = stats;
+					node.send(msg);
         }
-        node.send(msg);
         if (done) {
           done();
         }
