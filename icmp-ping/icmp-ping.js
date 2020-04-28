@@ -141,7 +141,7 @@ module.exports = function (RED) {
         m.forEach((result) => {
           rtt.push(parseFloat(result[1]));
         });
-        console.log("[ping] rtt: " + rtt);
+        // console.log("[ping] rtt: " + rtt);
 
         // add ping stats
         let sum = 0;
@@ -160,7 +160,7 @@ module.exports = function (RED) {
         stats.mean = +(sum / stats.success).toFixed(1);
         stats.ratio = +(stats.success / stats.sent).toFixed(1);
 
-				console.log("[ping] exit code: " + code);
+				// console.log("[ping] exit code: " + code);
         if (code === 0) {
 					msg.payload = stats;
 					node.send(msg);
