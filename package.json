@@ -1,0 +1,31 @@
+{
+  "name": "node-red-contrib-icmp-ping",
+  "version": "0.0.1",
+  "description": "A Node-RED node which takes input and pings a remote server.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coalpower/node-red-contrib-icmp-ping.git"
+  },
+  "keywords": [
+    "node-red",
+    "node-red-ping",
+    "node-red-contrib-icmp-ping",
+    "nodered",
+    "nodered ping",
+    "nodered icmp ping",
+    "ping"
+  ],
+  "node-red": {
+    "nodes": {
+      "file-function": "icmp-ping/icmp-ping.js"
+    }
+  },
+  "author": {
+    "name": "Daniel Carbonneau"
+  },
+  "license": "Apache",
+  "bugs": {
+    "url": "https://github.com/coalpower/node-red-contrib-icmp-ping/issues"
+  },
+  "homepage": "https://github.com/coalpower/node-red-contrib-icmp-ping"
+}
