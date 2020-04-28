@@ -159,6 +159,7 @@ module.exports = function (RED) {
         stats.mean = +(sum / stats.success).toFixed(1);
         stats.ratio = +(stats.success / stats.sent).toFixed(1);
 
+				console.log("[ping] exit code: " + code);
         if (code === 0) {
 					msg.payload = stats;
 					node.send(msg);
