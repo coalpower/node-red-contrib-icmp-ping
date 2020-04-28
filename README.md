@@ -1,15 +1,15 @@
-# node-red-configurable-ping
+# node-red-contrib-icmp-ping
 
 A <a href="http://nodered.org" target="_new">Node-RED</a> node which takes input and pings a remote server.
 
-This is a modification of the [node-red-contrib-advanced-ping](https://github.com/emiloberg/node-red-contrib-advanced-ping) node. Difference is that the timeout and the number of requests are configurable.
+This is a modification of the [node-red-contrib-advanced-ping](https://github.com/emiloberg/node-red-contrib-advanced-ping) node. Difference is that the timeout and the number of requests are configurable. It also provides ping stats and success ratio.
 
 
 ## Install
 
 Run the following command in the root directory of your Node-RED install
 
-    npm install node-red-configurable-ping
+    npm install node-red-contrib-icmp-ping
 
 ## Usage
 

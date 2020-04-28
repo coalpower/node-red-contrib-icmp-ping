@@ -12,65 +12,162 @@
  * limitations under the License.
  **/
 
-module.exports = function(RED) {
-    "use strict";
-    var spawn = require('child_process').spawn;
-    var plat = require('os').platform();
+module.exports = function (RED) {
+  "use strict";
+  let spawn = require("child_process").spawn;
+  let plat = require("os").platform();
 
-    function PingNode(n) {
-        RED.nodes.createNode(this,n);
-        this.host = n.host;
-        this.timeout = parseInt(n.timeout);
-        this.requests = parseInt(n.requests);
-        var node = this;
+  // Define node status
+  let statusProgress = {
+    fill: "blue",
+    shape: "dot",
+    text: "in progress",
+  };
+  let statusFailed = {
+    fill: "red",
+    shape: "dot",
+    text: "failed",
+  };
+  let statusOk = {
+    fill: "green",
+    shape: "dot",
+    text: "ok",
+  };
+  let statusError = {
+    fill: "red",
+    shape: "ring",
+    text: "error",
+  };
 
-		this.on("input", function (msg) {
-			var host = msg.host || node.host;
-			
-			if(msg.hasOwnProperty('payload')) {
-				msg._payload = msg.payload;
-			}
-			if(msg.hasOwnProperty('topic')) {
-				msg._topic = msg.topic;
-			}
-			msg.payload = false;
-			msg.topic = host;
+  function PingNode(n) {
+    RED.nodes.createNode(this, n);
+    this.host = n.host;
+    this.timeout = parseInt(n.timeout);
+    this.requests = parseInt(n.requests);
+    let node = this;
 
-			if (!host) {
-				node.warn('No host is specificed. Either specify in node configuration or by passing in msg.host');
-			}
+    node.on("input", function (msg, send, done) {
+      send =
+        send ||
+        function () {
+          node.send.apply(node, arguments);
+        };
 
-			var ex;
-			if (plat == "linux") { ex = spawn('ping', ['-n', '-w', node.timeout, '-c', node.requests, host]); }
-			else if (plat.match(/^win/)) { ex = spawn('ping', ['-n', node.requests, '-w', node.timeout*1000, host],{windowsHide: true}); }
-			else if (plat == "darwin") { ex = spawn('ping', ['-n', '-t', node.timeout, '-c', node.requests, host]); }
-			else { node.error("Sorry - your platform - "+plat+" - is not recognised."); }
-			var res = false;
-			var line = "";
-			//var regex = /from.*time.(.*)ms/;
-			var regex = /=.*[<|=]([0-9]*).*TTL|ttl..*=([0-9\.]*)/;
-			ex.stdout.on('data', function (data) {
-				line += data.toString();
-			});
-			ex.stderr.on('data', function (data) {
-				//console.log('[ping] stderr: ' + data);
-			});
-			ex.on('close', function (code) {
-				var m = regex.exec(line)||"";
-				if (m !== '') {
-					if (m[1]) { res = Number(m[1]); }
-					if (m[2]) { res = Number(m[2]); }
-				}
+      node.status(statusProgress);
+      let host = msg.host || node.host;
 
-				if (code === 0) {
-					msg.payload = res;
-				}
-				
-				node.send(msg);
-			});
+      if (msg.hasOwnProperty("payload")) {
+        msg._payload = msg.payload;
+      }
+      if (msg.hasOwnProperty("topic")) {
+        msg._topic = msg.topic;
+      }
 
-		});
+      msg.payload = false;
+      msg.topic = host;
 
-    }
-    RED.nodes.registerType("icmp ping",PingNode);
-}
+      // stop execution if host is not provided
+      if (!host) {
+        node.warn(
+          "No host is specificed. Either specify in node configuration or by passing in msg.host"
+        );
+        node.status(statusError);
+        return;
+      }
+
+      // execute ping command on detected platform
+      let ex;
+      if (plat == "linux") {
+        ex = spawn("ping", [
+          "-n",
+          "-w",
+          node.timeout,
+          "-c",
+          node.requests,
+          host,
+        ]);
+      } else if (plat.match(/^win/)) {
+        ex = spawn(
+          "ping",
+          ["-n", node.requests, "-w", node.timeout * 1000, host],
+          { windowsHide: true }
+        );
+      } else if (plat == "darwin") {
+        ex = spawn("ping", [
+          "-n",
+          "-t",
+          node.timeout,
+          "-c",
+          node.requests,
+          host,
+        ]);
+      } else {
+        node.error("Sorry - your platform - " + plat + " - is not recognised.");
+      }
+
+      let line = "";
+      let stats = {
+        sent: 0,
+        success: 0,
+        failed: 0,
+        mean: 0,
+        ratio: 0,
+      };
+
+      // regex to parse result of the command and extract rtt
+      let regex = /[Ff]rom.*time[<|=](\d*\.*\d*)\s*ms|[Ff]rom.*|timed/g;
+
+      // accumulate data into string line
+      ex.stdout.on("data", function (data) {
+        line += data.toString();
+      });
+
+      // log execution error
+      ex.stderr.on("data", function (data) {
+        console.log("[ping] stderr: " + data);
+      });
+
+      // process command result
+      ex.on("close", function (code) {
+        // node.warn(line);
+
+        let m = [...line.matchAll(regex)];
+        // node.warn(m);
+        stats.sent = m.length;
+
+        // extract rtt
+        let rtt = [];
+        m.forEach((result) => {
+          rtt.push(parseFloat(result[1]));
+        });
+        console.log("[ping] rtt: " + rtt);
+
+        // add ping stats
+        let sum = 0;
+        rtt.forEach((value) => {
+          if (isNaN(value)) {
+            stats.failed++;
+            node.status(statusFailed);
+          } else {
+            stats.success++;
+            sum = sum + value;
+            node.status(statusOk);
+          }
+        });
+
+        // calculate rtt mean and success ratio
+        stats.mean = +(sum / stats.success).toFixed(1);
+        stats.ratio = +(stats.success / stats.sent).toFixed(1);
+
+        if (code === 0) {
+          msg.payload = stats;
+        }
+        node.send(msg);
+        if (done) {
+          done();
+        }
+      });
+    });
+  }
+  RED.nodes.registerType("icmp ping", PingNode);
+};
