@@ -1,5 +1,7 @@
 # node-red-contrib-icmp-ping
 
+WORK IN PROGRESS!!! Do not use in production.
+
 A <a href="http://nodered.org" target="_new">Node-RED</a> node which takes input and pings a remote server.
 
 This is a modification of the [node-red-contrib-advanced-ping](https://github.com/emiloberg/node-red-contrib-advanced-ping) node. Difference is that the timeout and the number of requests are configurable. It also provides ping stats and success ratio.
