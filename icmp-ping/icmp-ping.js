@@ -164,7 +164,9 @@ module.exports = function (RED) {
         if (code === 0) {
           msg.payload = stats;
           node.send(msg);
-        }
+        } else {
+					node.status(statusError);
+				}
       });
 
       if (done) {
