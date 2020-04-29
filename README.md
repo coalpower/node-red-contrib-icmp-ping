@@ -4,8 +4,9 @@ WORK IN PROGRESS!!! Do not use in production.
 
 A <a href="http://nodered.org" target="_new">Node-RED</a> node which takes input and pings a remote server.
 
-This is a modification of the [node-red-contrib-advanced-ping](https://github.com/emiloberg/node-red-contrib-advanced-ping) node. Difference is that the timeout and the number of requests are configurable. It also provides ping stats and success ratio.
-
+This is a modification of the [node-red-configurable-ping](https://github.com/heyajohnny/node-red-configurable-ping) node and [node-red-contrib-advanced-ping](https://github.com/emiloberg/node-red-contrib-advanced-ping) node.
+Difference is that it also provides ping stats and success ratio.
+The node code has been updated to new node standards.
 
 ## Install
 
@@ -28,3 +29,16 @@ Ability to set ping options (timeout and number of requests).
 The defaults are:
 * 5 seconds timeout 
 * 1 ping request
+
+## Changes over node-red-configurable-ping
+Provide statistics of the ping sent. 
+The stats are:
+```
+{
+  "sent":3,
+  "success":3,
+  "failed":0,
+  "mean":12.3,
+  "ratio":1
+}
+```

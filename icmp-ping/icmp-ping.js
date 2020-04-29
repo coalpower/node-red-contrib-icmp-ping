@@ -102,8 +102,8 @@ module.exports = function (RED) {
           host,
         ]);
       } else {
-				node.error("Sorry - your platform - " + plat + " - is not recognised.");
-				return;
+        node.error("Sorry - your platform - " + plat + " - is not recognised.");
+        return;
       }
 
       let line = "";
@@ -160,15 +160,16 @@ module.exports = function (RED) {
         stats.mean = +(sum / stats.success).toFixed(1);
         stats.ratio = +(stats.success / stats.sent).toFixed(1);
 
-				// console.log("[ping] exit code: " + code);
+        // console.log("[ping] exit code: " + code);
         if (code === 0) {
-					msg.payload = stats;
-					node.send(msg);
-        }
-        if (done) {
-					done();
+          msg.payload = stats;
+          node.send(msg);
         }
       });
+
+      if (done) {
+        done();
+      }
     });
   }
   RED.nodes.registerType("icmp ping", PingNode);

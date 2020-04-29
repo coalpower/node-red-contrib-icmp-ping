@@ -13,48 +13,95 @@
 -->
 
 <script type="text/x-red" data-template-name="icmp ping">
-    <div class="form-row">
-        <label for="node-input-host"><i class="fa fa-dot-circle-o"></i> Host</label>
-        <input type="text" id="node-input-host" placeholder="www.google.com">
-    </div>
-    <div class="form-row">
-        <label for="node-input-timeout"><i class="fa fa-clock-o"></i> Timeout (S)</label>
-        <input type="text" id="node-input-timeout" placeholder="5">
-    </div>
-    <div class="form-row">
-        <label for="node-input-requests"><i class="fa fa-refresh"></i> Number of requests</label>
-        <input type="text" id="node-input-requests" placeholder="1">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
+  <div class="form-row">
+      <label for="node-input-host"><i class="fa fa-dot-circle-o"></i> Host</label>
+      <input type="text" id="node-input-host" placeholder="www.google.com">
+  </div>
+  <div class="form-row">
+      <label for="node-input-timeout"><i class="fa fa-clock-o"></i> Timeout (S)</label>
+      <input type="text" id="node-input-timeout" placeholder="5">
+  </div>
+  <div class="form-row">
+      <label for="node-input-requests"><i class="fa fa-refresh"></i> Number of requests</label>
+      <input type="text" id="node-input-requests" placeholder="1">
+  </div>
+  <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
 </script>
 
 <script type="text/x-red" data-help-name="icmp ping">
-    <p>Pings a machine and returns the trip time in ms. Will perform ping on <b>any</b> input.</p>
-    <p>Returns <b>false</b> if no response received within the configured timeout period,  or if the host is unresolveable.</p>
-    <p>Host set in configuration may be overridden by passing in a host in <code>msg.host</code>.</p>
+  <p>Pings a machine and returns the trip time in ms. Will perform ping on <b>any</b> input.</p>
+
+  <h3>Inputs</h3>
+      <dl class="message-properties">
+          <dt>payload
+            <span class="property-type">any</span>
+        </dt>
+        <dd>any message will trigger the ping</dd>
+          <dt>host
+              <span class="property-type">string</span>
+          </dt>
+          <dd>the host to ping. (override node config)</dd>
+      </dl>
+
+   <h3>Outputs</h3>
+       <ol class="node-ports">
+               <dl class="message-properties">
+                   <dt>payload <span class="property-type">string</span></dt>
+                   <dd>an object containing the ping stats.</dd>
+
+                  <dt>payload.sent</dt>
+                  <dd>the number of ping sent</dd>
+
+                  <dt>payload.success</dt>
+                  <dd>the number of successfull ping</dd>
+
+                  <dt>payload.failed</dt>
+                  <dd>the number of failed</dd>
+
+                  <dt>payload.mean</dt>
+                  <dd>the mean rtt in ms</dd>
+
+                  <dt>payload.ratio</dt>
+                  <dd>the ratio of successfull ping</dd>
+               </dl>
+
+       </ol>
+
+  <h3>Details</h3>
+      <p><code>msg.payload</code> is used to report the ping stats.
+      <p>Returns <b>false</b> if no response received within the configured timeout period,  or if the host is unresolveable.</p>
+      <p>Host set in configuration may be overridden by passing in a host in <code>msg.host</code>.</p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('icmp ping',{
-        category: 'advanced-input',
-        color:"#fdf0c2",
-        defaults: {
-            name: {value:""},
-            host: {value:""},
-            timeout: {value:"5", required:true, validate:RED.validators.number()},
-            requests: {value:"1", required:true, validate:RED.validators.number()}
-        },
-        inputs:1,
-        outputs:1,
-        icon: "alert.png",
-        label: function() {
-            return this.name || this.host || 'icmp ping';
-        },
-        labelStyle: function() {
-            return this.name?"node_label_italic":"";
-        }
-    });
+  RED.nodes.registerType("icmp ping", {
+    category: "advanced-input",
+    color: "#FFAAAA",
+    defaults: {
+      name: { value: "" },
+      host: { value: "" },
+      timeout: {
+        value: "5",
+        required: true,
+        validate: RED.validators.number(),
+      },
+      requests: {
+        value: "1",
+        required: true,
+        validate: RED.validators.number(),
+      },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "font-awesome/fa-arrows-v",
+    label: function () {
+      return this.name || this.host || "icmp ping";
+    },
+    labelStyle: function () {
+      return this.name ? "node_label_italic" : "";
+    },
+  });
 </script>
