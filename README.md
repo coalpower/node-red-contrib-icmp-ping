@@ -1,7 +1,5 @@
 # node-red-contrib-icmp-ping
 
-WORK IN PROGRESS!!! Do not use in production.
-
 A <a href="http://nodered.org" target="_new">Node-RED</a> node which takes input and pings a remote server.
 
 This is a modification of the [node-red-configurable-ping](https://github.com/heyajohnny/node-red-configurable-ping) node and [node-red-contrib-advanced-ping](https://github.com/emiloberg/node-red-contrib-advanced-ping) node.
@@ -24,12 +22,6 @@ Run the following command in the root directory of your Node-RED install
   * Incoming `msg.payload` data will be outputted as `msg._payload` (as the new `msg.payload` will contain the result of the ping).
   * Incoming `msg.topic` data will be outputted as `msg._topic` (as the new `msg.topic` will contain the the host).
 
-## Changes over node-red-contrib-advanced-ping
-Ability to set ping options (timeout and number of requests). 
-The defaults are:
-* 5 seconds timeout 
-* 1 ping request
-
 ## Changes over node-red-configurable-ping
 Provide statistics of the ping sent. 
 The stats are:
@@ -42,3 +34,9 @@ The stats are:
   "ratio":1
 }
 ```
+
+## Changes over node-red-contrib-advanced-ping
+Ability to set ping options (timeout and number of requests). 
+The defaults are:
+* 5 seconds timeout 
+* 1 ping request
