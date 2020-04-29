@@ -166,6 +166,7 @@ module.exports = function (RED) {
           node.send(msg);
         } else {
 					node.status(statusError);
+					node.send(msg);
 				}
       });
 
